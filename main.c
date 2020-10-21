@@ -4,13 +4,14 @@
 
 void bitSet (char * , char );
 void bitClr (char * , char );
+char bitGet (char * , char);
 
 int main(void)
 {
-    char a = 0x0F;
+    char a = 0;
     char *puerto= &a;
-    bitSet(puerto,4); 
-    printf("%X\n",*puerto);
+    bitSet(puerto,1); //Nota, poner los bits del 0 al 7, no del 1 al 8
+    printf("%X\n",(*puerto));
 return 0;
 }
 
@@ -33,4 +34,11 @@ void bitClr (char * puerto, char bits)
 char mask = 1 << bits;
 mask = ~mask;
 *puerto = mask & (*puerto);
+}
+
+char bitGet (char * puerto, char bits)
+{
+char mask = 1;
+char result = mask & (*puerto >> bits);
+return result;
 }
