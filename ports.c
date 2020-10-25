@@ -7,19 +7,21 @@ static union{
 }portD;
 
 
-/*int main(void)
+int main(void)
 {
-    portD.myPorts[1] = 0x10;
+    portD.D = 0xF0F1;
     char bits = 2;
-    char puerto = 'A'; //Nota, poner los bits del 0 al 7, no del 1 al 8
+    char puerto = 'D'; //Nota, poner los bits del 0 al 7, no del 1 al 8
+    uint16_t mask=0xF0F0;
     
+    maskToggle(puerto,mask);
     uint16_t contenido=lectura_puerto(puerto);
    
     printf("%04X\n",contenido);
 
  
 return 0;
-}*/
+}
 
  
 void bitSet (char letra_puerto, char bits)
@@ -100,7 +102,7 @@ void maskOff(char letra_puerto, uint16_t mask)
 {
     if (letra_puerto == 'A'){
         char mask_char = mask;
-        portD.myPorts[0] = ~(~(portD.myPorts[1]) | mask_char);
+        portD.myPorts[0] = ~(~(portD.myPorts[0]) | mask_char);
     }else if (letra_puerto == 'B'){
         char mask_char = mask;
         portD.myPorts[1] = ~(~(portD.myPorts[1]) | mask_char);
