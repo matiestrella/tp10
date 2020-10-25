@@ -1,29 +1,30 @@
+
+/***************************************************************************//**
+  @file     +ports.c+
+  @brief    +Manipulacion de los puertos A,B y D+
+  @author   +Grupo 6+
+ ******************************************************************************/
+
+/*******************************************************************************
+ * INCLUDE HEADER FILES
+ ******************************************************************************/
 #include "ports.h"
 
-//variable static
+/*******************************************************************************
+ * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
+ ******************************************************************************/
+
 static union{
     uint16_t D;
     uint8_t myPorts[2];
 }portD;
 
+/*******************************************************************************
+ *******************************************************************************
+                        GLOBAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
 
-int main(void)
-{
-    portD.D = 0xF0F1;
-    char bits = 2;
-    char puerto = 'D'; //Nota, poner los bits del 0 al 7, no del 1 al 8
-    uint16_t mask=0xF0F0;
-    
-    maskToggle(puerto,mask);
-    uint16_t contenido=lectura_puerto(puerto);
-   
-    printf("%04X\n",contenido);
-
- 
-return 0;
-}
-
- 
 void bitSet (char letra_puerto, char bits)
 {
     if (letra_puerto == 'A'){
@@ -109,7 +110,6 @@ void maskOff(char letra_puerto, uint16_t mask)
     }else if (letra_puerto == 'D'){
     portD.D = ~(~(portD.D) | mask);
     }
-    
 }
 
 //pone en el bit opuesto a aquellos bits que tienen 1 en la mascara
@@ -140,3 +140,25 @@ uint16_t lectura_puerto(char puerto)
     }
     return res;
 }
+
+void imprimir_puerto(char puerto)
+{
+    printf("Estado del puerto %c \n", puerto);
+    int i;
+    if(puerto == 'A' || puerto == 'B' )
+    {
+        for(i=7;i>=0;i--)
+        {
+            printf("%d ",bitGet(puerto,i));
+        }
+    }else if (puerto == 'D')
+    {
+        for(i=15;i>=0;i--)
+        {
+            printf("%d ",bitGet(puerto,i));
+        }
+        
+    }
+    printf("\n");
+}
+
