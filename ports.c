@@ -91,7 +91,7 @@ void maskOn(char letra_puerto, uint16_t mask)
         char mask_char = mask;
         portD.myPorts[1] = portD.myPorts[1] | mask_char;
     }else if (letra_puerto == 'D'){
-        portD.D = portD.D & mask;
+        portD.D = portD.D | mask;
         }
 }
 
