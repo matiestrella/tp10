@@ -6,73 +6,135 @@ static union{
     uint8_t myPorts[2];
 }portD;
 
-/*
-int main(void)
+
+/*int main(void)
 {
-    char a = 0;
-    char *puerto= &a;
-    bitSet(puerto,1); //Nota, poner los bits del 0 al 7, no del 1 al 8
-    printf("%X\n",(*puerto));
-return 0;
-}
-*/ 
+    portD.myPorts[1] = 0x10;
+    char bits = 2;
+    char puerto = 'A'; //Nota, poner los bits del 0 al 7, no del 1 al 8
+    
+    uint16_t contenido=lectura_puerto(puerto);
+   
+    printf("%04X\n",contenido);
+
  
-void bitSet (char * puerto, char bits)
-{
-char mask = 1 << bits;
-*puerto = mask | (*puerto);
-}
+return 0;
+}*/
 
-void bitClr (char * puerto, char bits)
-{
-char mask = 1 << bits;
-mask = ~mask;
-*puerto = mask & (*puerto);
-}
-
-char bitGet (char * puerto, char bits)
-{
-char mask = 1;
-char result = mask & (*puerto >> bits);
-return result;
-}
-
-// poner ceros en la parte de la mascara de los bits que se quieren apagar. Poner 1s en la amscara para que se mantengan igual
-void maskOff(char letra_puerto, char mask)
+ 
+void bitSet (char letra_puerto, char bits)
 {
     if (letra_puerto == 'A'){
+        char mask = 1 << bits;
+        portD.myPorts[0] = portD.myPorts[0] | mask;
+    }else if (letra_puerto == 'B'){
+        char mask = 1 << bits;
+        portD.myPorts[1] = portD.myPorts[1] | mask;
+    }else if (letra_puerto == 'D'){
+        uint16_t mask = 1 << bits;
+        portD.D = portD.D | mask;
+        }
+}
+
+void bitClr (char letra_puerto, char bits)
+{
+    if (letra_puerto == 'A'){
+        char mask = ~(1 << bits);
         portD.myPorts[0] = portD.myPorts[0] & mask;
     }else if (letra_puerto == 'B'){
+        char mask = ~(1 << bits);
         portD.myPorts[1] = portD.myPorts[1] & mask;
-    }else{
-        portD = portD & mask;
+    }else if (letra_puerto == 'D'){
+        uint16_t mask = ~(1 << bits);
+        portD.D = portD.D & mask;
+        }
+}
+
+char bitGet (char letra_puerto, char bits)
+{
+    char result;
+    if (letra_puerto == 'A'){
+        char mask = 1;
+        result = mask & (portD.myPorts[0] >> bits);
+    }else if (letra_puerto == 'B'){
+        char mask = 1;
+        result = mask & (portD.myPorts[1] >> bits);
+    }else if (letra_puerto == 'D'){
+        uint16_t mask = 1;
+        uint16_t result_16b = mask & (portD.D >> bits);
+        result = result_16b;
+        }
+ return result;
+} 
+
+
+
+// invierto el valor del bit seleccionado en el puerto elegido 
+void bitToggle (char letra_puerto, char bits)
+{
+    if(bitGet(letra_puerto,bits)==0)
+        bitSet(letra_puerto,bits);
+    else if(bitGet(letra_puerto,bits)==1)
+        bitClr(letra_puerto,bits);           
+}
+
+//Para prender un bit del puerto, colocar un 1 en el bit correspondiente de la mascara. 
+//Y para que un bit se mantenga igual en el puerto, colocar un 0 en el bit correspondiente de la mascara
+void maskOn(char letra_puerto, uint16_t mask)
+{
+    if (letra_puerto == 'A'){
+        char mask_char = mask;
+        portD.myPorts[0] = portD.myPorts[0] | mask_char;
+    }else if (letra_puerto == 'B'){
+        char mask_char = mask;
+        portD.myPorts[1] = portD.myPorts[1] | mask_char;
+    }else if (letra_puerto == 'D'){
+        portD.D = portD.D & mask;
+        }
+}
+
+
+// Para apagar un bit del puerto, colocar un 1 en el bit correspondiente de la mascara. 
+//Y para que un bit se mantenga igual en el puerto, colocar un 0 en el bit correspondiente de la mascara
+void maskOff(char letra_puerto, uint16_t mask)
+{
+    if (letra_puerto == 'A'){
+        char mask_char = mask;
+        portD.myPorts[0] = ~(~(portD.myPorts[1]) | mask_char);
+    }else if (letra_puerto == 'B'){
+        char mask_char = mask;
+        portD.myPorts[1] = ~(~(portD.myPorts[1]) | mask_char);
+    }else if (letra_puerto == 'D'){
+    portD.D = ~(~(portD.D) | mask);
     }
-    //&: multiplicar
+    
 }
 
 //pone en el bit opuesto a aquellos bits que tienen 1 en la mascara
-void maskToggle(char letra_puerto, char mask)
+void maskToggle(char letra_puerto, uint16_t mask)
 {
     if (letra_puerto == 'A'){
-        portD.myPorts[0] = portD.myPorts[0]^mask;
+        char mask_char = mask;
+        portD.myPorts[0] = portD.myPorts[0]^mask_char;
     }else if (letra_puerto == 'B'){
-        portD.myPorts[1] = portD.myPorts[1]^mask;
-    }else{
-        portD = portD^mask;
+        char mask_char = mask;
+        portD.myPorts[1] = portD.myPorts[1]^mask_char;
+    }else if (letra_puerto == 'D'){
+        portD.D = (portD.D)^mask;
     }
 }
 
 //funciones para que el usuario lea lo que se escribio en el puerto
 
-int lectura_puerto(char puerto)
+uint16_t lectura_puerto(char puerto)
 {
-    int res;
-    
+    uint16_t res=0;
     if(puerto == 'A'){
         res = portD.myPorts[0];
     }else if (puerto == 'B'){
         res = portD.myPorts[1];
-    }else{
-        res = portD;
+    }else if (puerto == 'D'){
+        res = portD.D;
     }
+    return res;
 }

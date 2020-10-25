@@ -3,7 +3,8 @@
   @brief    +Manipulacion de los puertos A,B y D+
   @author   +Grupo 6+
  ******************************************************************************/
-
+#ifndef _PORTS_H_
+#define _PORTS_H_
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
@@ -11,17 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-
-
-
-/*******************************************************************************
- * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
- ******************************************************************************/
-
-/*******************************************************************************
- * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
- ******************************************************************************/
-
 
 
 /*******************************************************************************
@@ -42,12 +32,14 @@
  * @return Descripcion valor que devuelve
 */
 
-void bitSet (char * , char );
-void bitClr (char * , char );
-char bitGet (char * , char);
-void maskOff(char *puerto, char mask);
-void maskToggle(char *puerto, char mask);
-int lectura_puerto(char puerto);
+void bitSet (char  , char);
+void bitClr (char  , char );
+char bitGet (char  , char);
+void bitToggle (char , char );
+void maskOn(char, uint16_t);
+void maskOff(char , uint16_t mask);
+void maskToggle(char , uint16_t mask);
+uint16_t lectura_puerto(char);
 
 
 /*******************************************************************************
